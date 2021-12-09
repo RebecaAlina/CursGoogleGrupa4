@@ -7,16 +7,22 @@ browser.get("https://www.mai.gov.ro/informare-covid-19-grupul-de-comunicare-stra
 table = browser.find_element_by_xpath('//*[@id="post-25121"]/div/div/table[1]/tbody')
 table_text = table.text
 lista = table_text.split('\n')
-print(lista)
 
 header = browser.find_element_by_xpath('//*[@id="post-25121"]/div/div/table[1]/tbody/tr[1]').find_elements_by_tag_name('td')
 header = [i.text for i in header]
 dictionar = {i: [] for i in header}
-# print(dictionar)
-for j in range(0, len(header)):
-    for i in range(len(header) + int(j), len(lista), len(header)):
-        dictionar[header[int(j)]].append(lista[i])
-print(dictionar)
 
-# df = pd.DataFrame(dictionar)
-# df.to_csv("20IANUARIE.csv")
+for j in range(1, len(lista)-2):
+    for i in range(len(header)):
+        if lista[j].count(" ") == 4:
+            dictionar[header[i]].append(lista[j].split(" ")[i])
+        else:
+            if i == 1:
+                dictionar[header[i]].append(str(lista[j].split(" ")[i] + " " + lista[j].split(" ")[i+1]))
+            elif i > 1:
+                dictionar[header[i]].append(str(lista[j].split(" ")[i+1]))
+            else:
+                dictionar[header[i]].append(lista[j].split(" ")[i])
+
+df = pd.DataFrame(dictionar)
+df.to_csv("Covid_cases.xls", mode="a", encoding='utf-16', index=False)
