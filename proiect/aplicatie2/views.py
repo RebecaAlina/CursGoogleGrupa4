@@ -30,6 +30,8 @@ class ListCompaniesView(LoginRequiredMixin, ListView):
     template_name = 'aplicatie2/companies_index.html'
 
     def get_queryset(self):
+        if self.request.user.is_superuser is True:
+            return self.model.objects.all()
         return self.model.objects.filter(id=self.request.user.userextend.customer.id)
 
 
@@ -68,7 +70,7 @@ class UpdateCompaniesView(LoginRequiredMixin, UpdateView):
 
 class UpdateProfile(LoginRequiredMixin, UpdateView):
     model = UserExtend
-    fields = NewAccountForm
+    form_class = NewAccountForm
     template_name = 'aplicatie2/companies_form.html'
 
     def get_queryset(self):
